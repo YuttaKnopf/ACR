@@ -73,7 +73,7 @@ jobs:
       - name: Create dir
         run: |
           mkdir mydirname 
-          mv readme-*.md mydirname    
+      # mv readme-*.md mydirname    
 
       # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
       #     docker pull trycontainerregistery.azurecr.io/image:7a2292d53b27cb375c9a0b50d8557214a6a46478
