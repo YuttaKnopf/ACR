@@ -86,10 +86,10 @@ jobs:
           content: hello
       - run: |
           echo hello
-          
+
       - name: Display the path
-        shell: cmd
-        run: echo %PATH%
+        shell: powershell
+        run: echo ${env:PATH}
       # mv readme-*.md mydirname    
 
       # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
