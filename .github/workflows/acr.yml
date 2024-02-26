@@ -88,8 +88,8 @@ jobs:
       #     echo hello
 
       - name: Display the path
-        shell: cmd
-        run: echo %PATH%
+        shell: bash
+        run: echo $PATH
 
       # mv readme-*.md mydirname    
 
