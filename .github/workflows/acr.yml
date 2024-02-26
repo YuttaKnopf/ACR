@@ -1,0 +1,104 @@
+name: 📦 Push to Azure Container Registry
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  push-to-azure-container-registry:
+    runs-on: ubuntu-latest
+    outputs:
+      acr_token: ${{ steps.create_token.outputs.acr_token }}
+      auth_token: ${{ steps.get_token.outputs.auth_token }}
+      # password_1: ${{ steps.get_token.outputs.password_1}}
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 🔑 Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Build and push image'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+          username: ${{ secrets.AZ_USERNAME }}
+          password: ${{ secrets.AZ_PASSWORD }}
+
+      # - run: |
+      #     docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }}
+      #     docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }}
+          
+      # - name: Push Docker image to Azure Container Registry
+      #   run: |
+      #       docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }} ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/image:${{ github.sha }}
+      #       docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/image:${{ github.sha }}  
+
+
+      - name: 'Create ACR Token'
+        id: create_token
+        run: |
+          ACR_TOKEN_JSON=$(az acr token create --name myToken --registry ${{ secrets.ACR_REGISTRY_NAME }} \
+          --repository image content/read --output json)
+          PASSWORD=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')   
+          echo "acr_token=$PASSWORD" >> $GITHUB_OUTPUT   
+   
+
+      - name: Use ACR Token
+        id: get_token  
+        run: |
+          echo ${{ steps.create_token.outputs.acr_token }}
+           
+
+      - name: Create a text file
+        uses: 1arp/create-a-file-action@0.4.4
+        with:
+          path: 'C:\Users\BGliksberg\משימות'
+          isAbsolutePath: true
+          file: 'example.txt'
+          content: |
+            Hello
+            World
+
+      - name: Write To File
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: ./client/my.py
+          contents: |
+            Hello World!
+          write-mode: append      
+
+      # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
+      #     docker pull trycontainerregistery.azurecr.io/image:7a2292d53b27cb375c9a0b50d8557214a6a46478
+          # docker images           
+      # - name: get properties
+      #   id: json_properties
+      #   uses: ActionsTools/read-json-action@main
+      #   with:
+      #     file_path: "package.json"
+
+      # - run: |
+      #   echo ${{steps.json_properties.outputs.name}}
+      #   echo ${{steps.json_properties.outputs.version}}  
+
+         
+
+ ###   echo "::set-output name=acr_token::$TOKEN_OUTPUT"
+        # uses: azure/CLI@v1
+        # with:
+        #   azcliversion: 2.30.0
+        #   inlineScript: |
+        #     az acr token create --name MyToken --registry ${{ secrets.ACR_REGISTRY_NAME }} \
+        #     --repository image \
+        #     content/read \
+        #     --output json 
+
+      # - uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+      #   id: downloadfile  # Remember to give an ID if you need the output filename
+      #   name: Download the file
+      #   with:
+      #     url: "C:\Users\BGliksberg\Downloads"
+      #     target: public/
+      # - name: Download a file
+      #   run: curl https://path/to/file -o "C:\Users\BGliksberg\Downloads"       
