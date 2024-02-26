@@ -19,12 +19,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'Build and push image'
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-          username: ${{ secrets.AZ_USERNAME }}
-          password: ${{ secrets.AZ_PASSWORD }}
+      # - name: 'Build and push image'
+      #   uses: azure/docker-login@v1
+      #   with:
+      #     login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+      #     username: ${{ secrets.AZ_USERNAME }}
+      #     password: ${{ secrets.AZ_PASSWORD }}
 
       # - run: |
       #     docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }}
@@ -36,19 +36,19 @@ jobs:
       #       docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/image:${{ github.sha }}  
 
 
-      - name: 'Create ACR Token'
-        id: create_token
-        run: |
-          ACR_TOKEN_JSON=$(az acr token create --name myToken --registry ${{ secrets.ACR_REGISTRY_NAME }} \
-          --repository image content/read --output json)
-          PASSWORD=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')   
-          echo "acr_token=$PASSWORD" >> $GITHUB_OUTPUT   
+      # - name: 'Create ACR Token'
+      #   id: create_token
+      #   run: |
+      #     ACR_TOKEN_JSON=$(az acr token create --name myToken --registry ${{ secrets.ACR_REGISTRY_NAME }} \
+      #     --repository image content/read --output json)
+      #     PASSWORD=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')   
+      #     echo "acr_token=$PASSWORD" >> $GITHUB_OUTPUT   
    
 
-      - name: Use ACR Token
-        id: get_token  
-        run: |
-          echo ${{ steps.create_token.outputs.acr_token }}
+      # - name: Use ACR Token
+      #   id: get_token  
+      #   run: |
+      #     echo ${{ steps.create_token.outputs.acr_token }}
            
 
       # - name: Create a text file
@@ -70,26 +70,27 @@ jobs:
       #     write-mode: append 
 
 
-      - name: Create dir
-        run: |
-          mkdir mydirname 
+      # - name: Create dir
+      #   run: |
+      #     mkdir mydirname 
 
 
 
      
 
-      - name: Create A File
-        uses: 1arp/create-a-file-action@0.2
-        with:
-          path: 
-          file: 'foo.bar'
-          content: hello
-      - run: |
-          echo hello
+      # - name: Create A File
+      #   uses: 1arp/create-a-file-action@0.2
+      #   with:
+      #     path: 
+      #     file: 'foo.bar'
+      #     content: hello
+      # - run: |
+      #     echo hello
 
       - name: Display the path
-        shell: powershell
-        run: echo ${env:PATH}
+        shell: cmd
+        run: echo %PATH%
+
       # mv readme-*.md mydirname    
 
       # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
