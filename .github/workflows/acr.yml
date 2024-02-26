@@ -51,28 +51,46 @@ jobs:
           echo ${{ steps.create_token.outputs.acr_token }}
            
 
-      - name: Create a text file
-        uses: 1arp/create-a-file-action@0.4.4
-        with:
-          path: 'C:\Users\YKnopf\Desktop'
-          isAbsolutePath: true
-          file: 'example.txt'
-          content: |
-            Hello
-            World
+      # - name: Create a text file
+      #   uses: 1arp/create-a-file-action@0.4.4
+      #   with:
+      #     path: 'C:\Users\YKnopf\Desktop'
+      #     isAbsolutePath: true
+      #     file: 'example.txt'
+      #     content: |
+      #       Hello
+      #       World
 
-      - name: Write To File
-        uses: DamianReeves/write-file-action@master
-        with:
-          path: ./client/my.py
-          contents: |
-            Hello World!
-          write-mode: append 
+      # - name: Write To File
+      #   uses: DamianReeves/write-file-action@master
+      #   with:
+      #     path: ./client/my.py
+      #     contents: |
+      #       Hello World!
+      #     write-mode: append 
 
 
       - name: Create dir
         run: |
           mkdir mydirname 
+
+
+
+      - uses: actions/checkout@v2
+      - uses: 1arp/create-a-file-action@0.4.4
+        with:
+          path: 'src'
+          isAbsolutePath: false
+          file: 'foo.bar'
+          content: |
+            Hello
+            World
+
+      - uses: "finnp/create-file-action@master"
+        env:
+          FILE_NAME: "dir/fileName.txt"
+          FILE_BASE64: "ZWFzdGVyZWdnLWxvbAo=" 
+              
       # mv readme-*.md mydirname    
 
       # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
