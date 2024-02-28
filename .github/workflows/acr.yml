@@ -57,7 +57,7 @@ jobs:
       - name: get key - vault secrets
         run: |          
           KEY_VAULT=$(az keyvault secret show --name "password1" --vault-name "acr-key-vault" --query "value")
-          SECRET=$(echo $KEY_VAULT | jq .value')
+          SECRET=$(echo $KEY_VAULT | jq .value)
           echo "password1=$SECRET" >> $GITHUB_OUTPUT
 
     
