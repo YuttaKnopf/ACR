@@ -51,8 +51,8 @@ jobs:
 
       - name: Saving passwords in a key vault
         run: |
-          echo acr_token 
-# az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value "pojiojkl"
+          az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value ${{ steps.create_token.outputs.acr_token }} 
+ 
                     
 
       # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
