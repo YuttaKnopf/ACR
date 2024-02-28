@@ -39,25 +39,21 @@ jobs:
       - name: 'Create ACR Token'
         id: create_token
         run: |
-
-          KEY_VAULT=$(az keyvault secret show --name "password1" --vault-name "acr-key-vault" --query "value")
-          echo $KEY_VAULT 
-# az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value "pojiojkl"
-          
-# SECRET=$(echo $KEY_VAULT | jq '.value')
-# echo "password1=$SECRET" >> $GITHUB_OUTPUT
+          ACR_TOKEN_JSON=$(az acr token create --name myToken --registry ${{ secrets.ACR_REGISTRY_NAME }} \
+          --repository image content/read --output json)
+          PASSWORD=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')   
+          echo "acr_token=$PASSWORD" >> $GITHUB_OUTPUT   
 
       - name: Use ACR Token
         id: get_token  
         run: |
           echo ${{ steps.create_token.outputs.acr_token }}
-              
-# ACR_TOKEN_JSON=$(az acr token create --name myToken --registry ${{ secrets.ACR_REGISTRY_NAME }} \
-# --repository image content/read --output json)
-# PASSWORD=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')   
-# echo "acr_token=$PASSWORD" >> $GITHUB_OUTPUT   
-# az keyvault create --name "acr-key-vault" --resource-group "myResourceGroup" --location "EastUS" 
-          
+
+      - name: Save passwords in key-vault
+        run: |
+          echo $PASSWORD"
+# az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value "pojiojkl"
+                    
 
       # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
       #     docker pull trycontainerregistery.azurecr.io/image:7a2292d53b27cb375c9a0b50d8557214a6a46478
