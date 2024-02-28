@@ -12,22 +12,26 @@ jobs:
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
+        
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: ':whale: Login to Container Registry'
+
+      - name: 'Login to Container Registry'
         uses: azure/docker-login@v1
         with:
           login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
           username: ${{ secrets.AZ_USERNAME }}
           password: ${{ secrets.AZ_PASSWORD }}
-      - name: ':building_construction: Build and push Docker image to Azure Container Registry'
+
+      - name: 'Build and push Docker image to Azure Container Registry'
         run: |
           docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}
           docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }} ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}
-      - name: ':lock: Create ACR Token'
+
+      - name: 'Create ACR Token'
         id: create_token
         run: |
           ACR_TOKEN_JSON=$(az acr token create --name $IMAGE_NAME-token --registry ${{ secrets.ACR_REGISTRY_NAME }} \
@@ -36,7 +40,8 @@ jobs:
           PASSWORD2=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[1].value')
           echo "password1=$PASSWORD1" >> $GITHUB_OUTPUT
           echo "password2=$PASSWORD2" >> $GITHUB_OUTPUT
-      - name: ':left_luggage: Saving passwords in a Key Vault'
+
+      - name: 'Saving passwords in a Key Vault'
         run: |
           az keyvault secret set --vault-name ${{ secrets.KEY_VAULT_NAME }} --name "password1" --value ${{ steps.create_token.outputs.password1 }}
           az keyvault secret set --vault-name ${{ secrets.KEY_VAULT_NAME }} --name "password2" --value ${{ steps.create_token.outputs.password2 }}
