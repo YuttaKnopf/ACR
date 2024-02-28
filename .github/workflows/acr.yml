@@ -45,7 +45,9 @@ jobs:
           echo "acr_token=$PASSWORD" >> $GITHUB_OUTPUT   
           az keyvault create --name "acr-key-vault" --resource-group "myResourceGroup" --location "EastUS" 
           az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value $PASSWORD
-          az keyvault secret show --name "password1" --vault-name "acr-key-vault" --query "value"
+          
+          KEY_VAULT=$(az keyvault secret show --name "password1" --vault-name "acr-key-vault" --query "value")
+          echo $KEY_VAULT
 
       - name: Use ACR Token
         id: get_token  
