@@ -6,10 +6,12 @@ on:
 jobs:
   push-to-azure-container-registry:
     runs-on: ubuntu-latest
+
     outputs:
       acr_token: ${{ steps.create_token.outputs.acr_token }}
       auth_token: ${{ steps.get_token.outputs.auth_token }}
       password_1: ${{ steps.get_token.outputs.password_1}}
+
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
@@ -19,22 +21,21 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # - name: 'Build and push image'
-      #   uses: azure/docker-login@v1
-      #   with:
-      #     login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-      #     username: ${{ secrets.AZ_USERNAME }}
-      #     password: ${{ secrets.AZ_PASSWORD }}
+      - name: 'Build and push image'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+          username: ${{ secrets.AZ_USERNAME }}
+          password: ${{ secrets.AZ_PASSWORD }}
 
-      # - run: |
-      #     docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }}
-      #     docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }}
+      - run: |
+          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }}
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }}
           
-      # - name: Push Docker image to Azure Container Registry
-      #   run: |
-      #       docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }} ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/image:${{ github.sha }}
-      #       docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/image:${{ github.sha }}  
-
+      - name: Push Docker image to Azure Container Registry
+        run: |
+            docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/image:${{ github.sha }} ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/image:${{ github.sha }}
+            docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/image:${{ github.sha }}  
 
       - name: 'Create ACR Token'
         id: create_token
@@ -54,23 +55,9 @@ jobs:
           az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value ${{ steps.create_token.outputs.acr_token }} 
  
       - name: get key - vault secrets
-        run: |
-          echo=$(az keyvault secret show --name "password1" --vault-name "acr-key-vault" --query "value")
-
-      # docker login -u myToken -p ${{ steps.create_token.outputs.acr_token }} ${{ secrets.REGISTRY_LOGIN_SERVER }}
-      #     docker pull trycontainerregistery.azurecr.io/image:7a2292d53b27cb375c9a0b50d8557214a6a46478
-          # docker images           
-      # - name: get properties
-      #   id: json_properties
-      #   uses: ActionsTools/read-json-action@main
-      #   with:
-      #     file_path: "package.json"
-
-      # - run: |
-      #   echo ${{steps.json_properties.outputs.name}}
-      #   echo ${{steps.json_properties.outputs.version}}  
-
-         
-
+        run: |          
+          KEY_VAULT=$(az keyvault secret show --name "password1" --vault-name "acr-key-vault" --query "value")
+          SECRET=$(echo $KEY_VAULT | jq '.value')
+          echo "password1=$SECRET" >> $GITHUB_OUTPUT
 
     
