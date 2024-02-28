@@ -70,11 +70,18 @@ jobs:
       #     write-mode: append 
 
 
-      # - name: Create dir
-      #   run: |
-      #     mkdir mydirname 
+      - name: Create dir
+        run: |
+          mkdir mydirname 
 
-
+      - uses: actions/checkout@v2
+      - uses: 1arp/create-a-file-action@0.4.4
+        with:
+          path: 'src'
+          file: 'foo.bar'
+          content: |
+            Hello
+            World
 
      
 
@@ -87,9 +94,9 @@ jobs:
       # - run: |
       #     echo hello
 
-      - name: Display the path
-        shell: bash
-        run: echo $PATH
+      # - name: Display the path
+      #   shell: bash
+      #   run: echo $PATH
 
       # mv readme-*.md mydirname    
 
