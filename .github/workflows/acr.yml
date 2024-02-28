@@ -40,10 +40,10 @@ jobs:
         id: create_token
         run: |
 
-          az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value "pojiojkl"
-          
           KEY_VAULT=$(az keyvault secret show --name "password1" --vault-name "acr-key-vault" --query "value")
-          echo $KEY_VAULT
+          echo $KEY_VAULT 
+# az keyvault secret set --vault-name "acr-key-vault" --name "password1" --value "pojiojkl"
+          
 # SECRET=$(echo $KEY_VAULT | jq '.value')
 # echo "password1=$SECRET" >> $GITHUB_OUTPUT
 
