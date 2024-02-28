@@ -44,7 +44,7 @@ jobs:
           PASSWORD=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')   
           echo "acr_token=$PASSWORD" >> $GITHUB_OUTPUT   
           az keyvault create --name "image-rediction-key-vault" --resource-group "myResourceGroup" --location "EastUS" 
-          az keyvault secret set --vault-name "image-rediction-key-vault" --name "password1" --value ${{ PASSWORD }}
+          az keyvault secret set --vault-name "image-rediction-key-vault" --name "password1" --value $PASSWORD
 
       - name: Use ACR Token
         id: get_token  
