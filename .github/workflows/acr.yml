@@ -1,4 +1,4 @@
-name: Push to Azure Container Registry
+name: 🚩 Push to Azure Container Registry
 on:
   workflow_dispatch:
 env:
