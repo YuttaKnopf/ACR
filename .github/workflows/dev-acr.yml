@@ -119,23 +119,23 @@ jobs:
           CUSTOM_MATRIX_DIRECTORY=$(echo "${{ matrix.directory }}" | sed 's/\//./g')
           echo "CUSTOM_MATRIX_DIRECTORY=$CUSTOM_MATRIX_DIRECTORY" >> "$GITHUB_ENV"
 
-      - name: 👷 Import Function App Name And Version
-        run: |
-          version=$(python -c "import ${{ env.CUSTOM_MATRIX_DIRECTORY }}.project; print(${{ env.CUSTOM_MATRIX_DIRECTORY }}.project.__version__)")
-          function_name=$(python -c "import ${{ env.CUSTOM_MATRIX_DIRECTORY }}.project; print(${{ env.CUSTOM_MATRIX_DIRECTORY }}.project.function_app_name)")
-          echo "TAG=$version" >> "$GITHUB_ENV"  
-          echo "FUNCTION_NAME=$function_name" >> "$GITHUB_ENV"  
+      # - name: 👷 Import Function App Name And Version
+      #   run: |
+      #     version=$(python -c "import ${{ env.CUSTOM_MATRIX_DIRECTORY }}.project; print(${{ env.CUSTOM_MATRIX_DIRECTORY }}.project.__version__)")
+      #     function_name=$(python -c "import ${{ env.CUSTOM_MATRIX_DIRECTORY }}.project; print(${{ env.CUSTOM_MATRIX_DIRECTORY }}.project.function_app_name)")
+      #     echo "TAG=$version" >> "$GITHUB_ENV"  
+      #     echo "FUNCTION_NAME=$function_name" >> "$GITHUB_ENV"  
       
-      - name: 🐳 Docker metadata
-        id: docker_meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}/${{ env.LAST_LEVEL }}
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{major}}.{{minor}}.{{patch}},value=${{ env.TAG }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.TAG }}
-            type=semver,pattern={{major}},value=${{ env.TAG }}
+      # - name: 🐳 Docker metadata
+      #   id: docker_meta
+      #   uses: docker/metadata-action@v5
+      #   with:
+      #     images: ghcr.io/${{ github.repository }}/${{ env.LAST_LEVEL }}
+      #     tags: |
+      #       type=raw,value=latest,enable={{is_default_branch}}
+      #       type=semver,pattern={{major}}.{{minor}}.{{patch}},value=${{ env.TAG }}
+      #       type=semver,pattern={{major}}.{{minor}},value=${{ env.TAG }}
+      #       type=semver,pattern={{major}},value=${{ env.TAG }}
 
       # - name: 🏗️ Build and push container image to registry
       #   id: build-and-push
@@ -150,7 +150,7 @@ jobs:
       - name: 'Build and push Docker image to Azure Container Registry'
         run: |
           docker build ./${{ matrix.directory }} -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }}
-          docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }} ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}
+          docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }} ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }}
 
 
