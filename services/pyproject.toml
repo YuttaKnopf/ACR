@@ -1,0 +1,5 @@
+[project]
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = { attr = "project.__version__" }
