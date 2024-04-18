@@ -13,10 +13,17 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
 
+      # - name: Login to Azure
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+
       - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        run: az login
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: 'Login to Container Registry'
         uses: azure/docker-login@v1
@@ -31,17 +38,17 @@ jobs:
           docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }} ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}
 
-      - name: 'Create ACR Token'
-        id: create_token
-        run: |
-          ACR_TOKEN_JSON=$(az acr token create --name $IMAGE_NAME-token --registry ${{ secrets.ACR_REGISTRY_NAME }} \
-          --repository $IMAGE_NAME content/read --output json)
-          PASSWORD1=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')
-          PASSWORD2=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[1].value')
-          echo "password1=$PASSWORD1" >> $GITHUB_OUTPUT
-          echo "password2=$PASSWORD2" >> $GITHUB_OUTPUT
+      # - name: 'Create ACR Token'
+      #   id: create_token
+      #   run: |
+      #     ACR_TOKEN_JSON=$(az acr token create --name $IMAGE_NAME-token --registry ${{ secrets.ACR_REGISTRY_NAME }} \
+      #     --repository $IMAGE_NAME content/read --output json)
+      #     PASSWORD1=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[0].value')
+      #     PASSWORD2=$(echo $ACR_TOKEN_JSON | jq '.credentials.passwords[1].value')
+      #     echo "password1=$PASSWORD1" >> $GITHUB_OUTPUT
+      #     echo "password2=$PASSWORD2" >> $GITHUB_OUTPUT
 
-      - name: 'Saving passwords in a Key Vault'
-        run: |
-          az keyvault secret set --vault-name ${{ secrets.KEY_VAULT_NAME }} --name "password1" --value ${{ steps.create_token.outputs.password1 }}
-          az keyvault secret set --vault-name ${{ secrets.KEY_VAULT_NAME }} --name "password2" --value ${{ steps.create_token.outputs.password2 }}
+      # - name: 'Saving passwords in a Key Vault'
+      #   run: |
+      #     az keyvault secret set --vault-name ${{ secrets.KEY_VAULT_NAME }} --name "password1" --value ${{ steps.create_token.outputs.password1 }}
+      #     az keyvault secret set --vault-name ${{ secrets.KEY_VAULT_NAME }} --name "password2" --value ${{ steps.create_token.outputs.password2 }}
