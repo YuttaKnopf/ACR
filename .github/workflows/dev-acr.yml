@@ -149,7 +149,7 @@ jobs:
 
       - name: 'Build and push Docker image to Azure Container Registry'
         run: |
-          docker build ./${{ matrix.directory }}/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }}
+          docker build ./${{ matrix.directory }} -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }}
           docker tag ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }} ${{ secrets.REGISTRY_LOGIN_SERVER }}/$IMAGE_NAME:${{ github.sha }}
           docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ matrix.directory }}:${{ github.sha }}
 
