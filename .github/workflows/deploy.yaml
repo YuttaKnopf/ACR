@@ -6,8 +6,8 @@ permissions:
   contents: read
   packages: write
 
-env:
-  WORKING_DIR: users-management
+# env:
+  # WORKING_DIR: users-management
 
 jobs:
   build:
@@ -17,9 +17,9 @@ jobs:
     steps:
       - name: 📁 Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.inputs.branchName }}
+        # with:
+        #   fetch-depth: 0
+        #   ref: ${{ github.event.inputs.branchName }}
 
       - name: 🔧 Docker QEMU Setup
         uses: docker/setup-qemu-action@v3
@@ -38,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/${{ env.WORKING_DIR }}
+          images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/satellite
           flavor: |
             latest=false
           tags: |
@@ -50,9 +50,9 @@ jobs:
         uses: docker/build-push-action@v5
         id: docker_build
         with:
-          context: ./${{ env.WORKING_DIR }}
+          context: . 
           push: true
           provenance: false
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
-          file: ./${{ env.WORKING_DIR }}/Dockerfile
+          file: ./Dockerfile
