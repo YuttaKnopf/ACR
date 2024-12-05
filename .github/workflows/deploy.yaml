@@ -1,11 +1,6 @@
 name: ⚙️ Build and deploy to ACR 
 
-on:
-  workflow_dispatch:
-    inputs:
-      branchName:
-        description: "branch name"
-        required: true
+on: push
 
 permissions:
   contents: read
