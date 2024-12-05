@@ -1,0 +1,21 @@
+name: 🔑 Security Certificate Check
+
+on:
+  push:
+
+jobs:
+  check-certificate-installation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📂 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Check for certificate installation lines
+        run: |
+          while IFS= read -r file; do
+            if grep -q "https://netfree.link/dl/unix-ca.sh /home/netfree-unix-ca.sh" "$file"; then
+              echo "Error: Security certificate installation lines found in $file"
+              exit 1
+            fi
+          done < <(find . -type f -iname 'dockerfile')

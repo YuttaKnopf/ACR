@@ -1,0 +1,15 @@
+[project]
+name = "satelite_image_monitoring"
+version = "1.0.0"
+
+dependencies = [
+    "numpy==2.1.0",
+    "opencv-python==4.10.0.84",
+    "pillow==10.4.0",
+    "shapely==2.0.6",
+    "python-dotenv==1.0.1",
+    "pymongo==4.10.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

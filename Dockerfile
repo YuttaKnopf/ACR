@@ -1,7 +1,11 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
-WORKDIR /try
-COPY requirements.txt .
+FROM python:3.13.0
 
-RUN pip install -r requirements.txt
+WORKDIR /app
 
+COPY . /app
 
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
+RUN pip install .
+
+ENTRYPOINT [ "python", "src/main.py"]

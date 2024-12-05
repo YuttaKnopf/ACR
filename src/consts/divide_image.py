@@ -1,0 +1,1 @@
+SUB_IMAGE_SIZE = 400
